@@ -1,0 +1,104 @@
+# Pre-commit framework configuration
+# Enforces code quality and standards before commits
+#
+# Install: `pip install pre-commit`
+# Setup: `pre-commit install`
+# Manual run: `pre-commit run --all-files`
+#
+# When a commit is attempted, hooks run automatically
+# If any hook fails, commit is rejected (must fix and try again)
+
+repos:
+  # Rust formatting and linting
+  - repo: local
+    hooks:
+      - id: cargo-fmt
+        name: cargo fmt
+        description: Format Rust code with cargo fmt
+        entry: cargo fmt --all --
+        language: system
+        types: [rust]
+        pass_filenames: false
+
+      - id: cargo-clippy
+        name: cargo clippy
+        description: Lint Rust code with cargo clippy
+        entry: cargo clippy --all-targets --all-features -- -D warnings
+        language: system
+        types: [rust]
+        pass_filenames: false
+
+      - id: cargo-test
+        name: cargo test
+        description: Run Rust tests
+        entry: cargo test --lib
+        language: system
+        types: [rust]
+        pass_filenames: false
+
+  # TypeScript/JavaScript formatting
+  # Note: Will be enabled after npm install creates node_modules
+  # - repo: https://github.com/pre-commit/mirrors-prettier
+  #   rev: v3.0.3
+  #   hooks:
+  #     - id: prettier
+  #       name: prettier
+  #       description: Format TypeScript/JavaScript with Prettier
+  #       types: [ts, js, json]
+
+  # TypeScript/JavaScript linting
+  # Note: Will be enabled after npm install creates node_modules
+  # - repo: https://github.com/pre-commit/mirrors-eslint
+  #   rev: v8.50.0
+  #   hooks:
+  #     - id: eslint
+  #       name: eslint
+  #       description: Lint TypeScript/JavaScript with ESLint
+  #       types: [ts, js]
+  #       additional_dependencies: ['eslint']
+
+  # General hooks
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.4.0
+    hooks:
+      # Prevent giant files from being committed
+      - id: check-added-large-files
+        name: check for large files
+        description: Prevent large files from being committed (>500KB)
+        args: ['--maxkb=500']
+
+      # Check JSON is valid
+      - id: check-json
+        name: check json
+        description: Validate JSON syntax
+
+      # Check YAML is valid
+      - id: check-yaml
+        name: check yaml
+        description: Validate YAML syntax
+        args: ['--unsafe']
+
+      # Check for merge conflicts
+      - id: check-merge-conflict
+        name: check for merge conflicts
+        description: Detect merge conflict markers
+
+      # Fix line ending (CRLF -> LF)
+      - id: end-of-file-fixer
+        name: fix end of file
+        description: Ensure files end with newline
+
+      # Trim trailing whitespace
+      - id: trailing-whitespace
+        name: trim trailing whitespace
+        description: Remove trailing whitespace
+
+# Configuration
+ci:
+  autofix_commit_msg: 'chore: pre-commit auto-fixes'
+  autofix_prs: true
+  autoupdate_branch: ''
+  autoupdate_commit_msg: 'chore: pre-commit hook updates'
+  autoupdate_schedule: weekly
+  skip: [cargo-fmt, cargo-clippy, cargo-test]
+  submodules: false
