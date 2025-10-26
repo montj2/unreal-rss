@@ -25,7 +25,7 @@ src-tauri/Cargo.lock
 .env.*.local
 
 # IDE / Editor
-.vscode/
+# .vscode/ - Commented out to allow workspace settings to be shared
 .idea/
 *.swp
 *.swo
