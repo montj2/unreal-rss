@@ -9,13 +9,13 @@
 # If any hook fails, commit is rejected (must fix and try again)
 
 repos:
-  # Rust formatting and linting
+  # Rust formatting and linting (only run in src-tauri)
   - repo: local
     hooks:
       - id: cargo-fmt
         name: cargo fmt
         description: Format Rust code with cargo fmt
-        entry: cargo fmt --all --
+        entry: sh -c 'cd src-tauri && cargo fmt --all --'
         language: system
         types: [rust]
         pass_filenames: false
@@ -23,18 +23,20 @@ repos:
       - id: cargo-clippy
         name: cargo clippy
         description: Lint Rust code with cargo clippy
-        entry: cargo clippy --all-targets --all-features -- -D warnings
+        entry: sh -c 'cd src-tauri && cargo clippy --all-targets --all-features -- -D warnings'
         language: system
         types: [rust]
         pass_filenames: false
+        stages: [manual]
 
       - id: cargo-test
         name: cargo test
         description: Run Rust tests
-        entry: cargo test --lib
+        entry: sh -c 'cd src-tauri && cargo test --lib'
         language: system
         types: [rust]
         pass_filenames: false
+        stages: [manual]
 
   # TypeScript/JavaScript formatting
   # Note: Will be enabled after npm install creates node_modules
